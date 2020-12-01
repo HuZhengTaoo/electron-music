@@ -1,6 +1,6 @@
 const { app, BrowserWindow , ipcMain, dialog } = require('electron')
-
-
+const DataStore = require('./renderer/MusicDataStore')
+const myStore = new DataStore({'name':'MusicData'})
 class AppWindow extends BrowserWindow {
   constructor(config,fileLocation) { 
     const basicConfig = {  
@@ -26,6 +26,10 @@ app.on('ready', () => {
       height: 400,
       parent:mainWindow  
     }, './renderer/add.html')  
+  })
+  ipcMain.on('add-tracks', (event, tracks) => { 
+    const updateTracks = myStore.addTracks(tracks).getTracks()
+    console.log(updateTracks)
   })
   ipcMain.on('open-music-file', (event) => { 
     dialog.showOpenDialog({ 
